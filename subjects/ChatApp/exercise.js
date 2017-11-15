@@ -14,8 +14,8 @@
 //   sender and/or content
 ////////////////////////////////////////////////////////////////////////////////
 import React from 'react'
-import { render } from 'react-dom'
-import { login, sendMessage, subscribeToMessages } from './utils/ChatUtils'
+import {render} from 'react-dom'
+import {login, sendMessage, subscribeToMessages} from './utils/ChatUtils'
 import './styles'
 
 /*
@@ -43,52 +43,71 @@ The world is your oyster!
 */
 
 class Chat extends React.Component {
+  state = {
+    auth: null,
+    messages: []
+  };
+
+  componentDidMount() {
+    login((error, auth) => {
+      this.setState({auth: auth});
+    });
+
+    subscribeToMessages(messages => {
+      this.setState({messages: messages});
+    })
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    const { auth } = this.state;
+    const messageText = this.messageInput.value;
+
+    if ((/\S/).test(messageText)) {
+      sendMessage(
+        auth.uid,                       // the auth.uid string
+        auth.github.username,           // the username
+        auth.github.profileImageURL,    // the user's profile image
+        messageText                     // the text of the message
+      );
+
+      // Clear the form.
+      event.target.reset()
+    }
+
+  };
+
   render() {
+    const {auth, messages} = this.state;
+
+    if (auth == null) {
+      return <p>Loading...</p>
+    }
+
     return (
       <div className="chat">
         <header className="chat-header">
           <h1 className="chat-title">HipReact</h1>
-          <p className="chat-message-count"># messages: 3</p>
+          <p className="chat-message-count"># messages: {this.state.messages.length}</p>
         </header>
         <div className="messages">
           <ol className="message-groups">
-            <li className="message-group">
-              <div className="message-group-avatar">
-                <img src="https://avatars1.githubusercontent.com/u/92839"/>
-              </div>
-              <ol className="messages">
-                <li className="message">So, check it out:</li>
-                <li className="message">QA Engineer walks into a bar.</li>
-                <li className="message">Orders a beer.</li>
-                <li className="message">Orders 0 beers.</li>
-                <li className="message">Orders 999999999 beers.</li>
-                <li className="message">Orders a lizard.</li>
-                <li className="message">Orders -1 beers.</li>
-                <li className="message">Orders a sfdeljknesv.</li>
-              </ol>
-            </li>
-            <li className="message-group">
-              <div className="message-group-avatar">
-                <img src="https://avatars2.githubusercontent.com/u/100200"/>
-              </div>
-              <ol className="messages">
-                <li className="message">Haha</li>
-                <li className="message">Stop stealing other people's jokes :P</li>
-              </ol>
-            </li>
-            <li className="message-group">
-              <div className="message-group-avatar">
-                <img src="https://avatars1.githubusercontent.com/u/92839"/>
-              </div>
-              <ol className="messages">
-                <li className="message">:'(</li>
-              </ol>
-            </li>
+            {this.state.messages.map((message, index) => (
+              <li key={index} className="message-group">
+                <div className="message-group-avatar">
+                  <img src={message.avatarURL}/>
+                </div>
+                <ol className="messages">
+                  <li className="message">{message.text}</li>
+                </ol>
+              </li>
+            ))}
           </ol>
         </div>
-        <form className="new-message-form">
+        <form className="new-message-form" onSubmit={this.handleSubmit}>
           <div className="new-message">
-            <input ref="message" type="text" placeholder="say something..."/>
+            <input ref={node => this.messageInput = node} type="text" placeholder="say something..."/>
           </div>
         </form>
       </div>
