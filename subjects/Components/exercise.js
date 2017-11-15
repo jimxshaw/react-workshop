@@ -14,7 +14,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const styles = {}
+const styles = {};
 
 styles.tab = {
   display: 'inline-block',
@@ -23,45 +23,49 @@ styles.tab = {
   borderBottom: '4px solid',
   borderBottomColor: '#ccc',
   cursor: 'pointer'
-}
+};
 
 styles.activeTab = {
   ...styles.tab,
   borderBottomColor: '#000'
-}
+};
 
 styles.panel = {
   padding: 10
-}
+};
 
 class Tabs extends React.Component {
   state = {
-    tabDesc: "default",
-    activeTab: 'USA'
+    activeIndex: 0
   };
 
-  handleClick(id, description) {
+  handleTabChange = (index) => {
     this.setState({
-      tabDesc: description,
-      activeTab: id
+      activeIndex: index
     });
   }
 
   render() {
     return (
       <div className="Tabs">
-        {this.props.data.map(tab => (
-          <div
-            className="Tab"
-            style={this.state.activeTab === tab.id ? styles.activeTab : styles.tab}
-            onClick={() => this.handleClick(tab.id, tab.description)}
-          >
+        {this.props.data.map((tab, index) => {
+          const isActive = index === this.state.activeIndex;
+
+          const handleClick = () => {
+            this.handleTabChange(index);
+          };
+
+          return <div
+                    key={tab.id}
+                    className="Tab"
+                    style={isActive ? styles.activeTab : styles.tab}
+                    onClick={handleClick}>
             {tab.name}
           </div>
-        ))}
+        })}
 
         <div className="TabPanel" style={styles.panel}>
-          {this.state.tabDesc}
+          {this.props.data[this.state.activeIndex].description}
         </div>
       </div>
     )
