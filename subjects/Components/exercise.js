@@ -35,17 +35,33 @@ styles.panel = {
 }
 
 class Tabs extends React.Component {
+  state = {
+    tabDesc: "default",
+    activeTab: 'USA'
+  };
+
+  handleClick(id, description) {
+    this.setState({
+      tabDesc: description,
+      activeTab: id
+    });
+  }
+
   render() {
     return (
       <div className="Tabs">
-        <div className="Tab" style={styles.activeTab}>
-          Active
-        </div>
-        <div className="Tab" style={styles.tab}>
-          Inactive
-        </div>
+        {this.props.data.map(tab => (
+          <div
+            className="Tab"
+            style={this.state.activeTab === tab.id ? styles.activeTab : styles.tab}
+            onClick={() => this.handleClick(tab.id, tab.description)}
+          >
+            {tab.name}
+          </div>
+        ))}
+
         <div className="TabPanel" style={styles.panel}>
-          Panel
+          {this.state.tabDesc}
         </div>
       </div>
     )
