@@ -58,10 +58,14 @@ class Chat extends React.Component {
     })
   }
 
+  componentDidUpdate() {
+    this.scroller.scrollTop = this.scroller.scrollHeight;
+  }
+
   handleSubmit = (event) => {
     event.preventDefault();
 
-    const { auth } = this.state;
+    const {auth} = this.state;
     const messageText = this.messageInput.value;
 
     if ((/\S/).test(messageText)) {
@@ -91,7 +95,7 @@ class Chat extends React.Component {
           <h1 className="chat-title">HipReact</h1>
           <p className="chat-message-count"># messages: {this.state.messages.length}</p>
         </header>
-        <div className="messages">
+        <div className="messages" ref={node => this.scroller = node}>
           <ol className="message-groups">
             {this.state.messages.map((message, index) => (
               <li key={index} className="message-group">
