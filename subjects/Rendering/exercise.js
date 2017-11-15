@@ -28,14 +28,44 @@ const DATA = {
   ]
 }
 
+const mexicanFood = DATA.items.filter(item => (
+  item.type === 'mexican'
+));
+
+const arrayOfTypes = DATA.items.map(item => (
+  item.type
+));
+
+
+const uniqueFilter = arrayOfTypes.filter(onlyUnique);
+
+let sortOrder = '-name';
+const alpha = mexicanFood.sort(sortBy(sortOrder));
+
+const type = uniqueFilter.map(item => (
+  <option>{item}</option>
+));
+
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
+
 function Menu() {
+  const items = alpha.map(item => (
+    <li>{item.name}</li>
+));
+
   return (
     <div>
-      Open the console, you have failing tests.
+      <h1>{DATA.title}</h1>
+      <select>{type}</select>
+      <ul>{items}</ul>
+      <button>sort</button>
     </div>
   )
 }
 
 ReactDOM.render(<Menu/>, document.getElementById('app'), () => {
   require('./tests').run()
-})
+});
