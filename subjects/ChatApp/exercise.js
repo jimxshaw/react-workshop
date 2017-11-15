@@ -92,7 +92,7 @@ class Chat extends React.Component {
     return (
       <div className="chat">
         <header className="chat-header">
-          <h1 className="chat-title">HipReact</h1>
+          <h1 className="chat-title">{this.state.auth.github.displayName}</h1>
           <p className="chat-message-count"># messages: {this.state.messages.length}</p>
         </header>
         <div className="messages" ref={node => this.scroller = node}>
